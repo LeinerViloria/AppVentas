@@ -1,0 +1,36 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:AppVentas"
+             mc:Ignorable="d"
+             Title="App Ventas"
+             x:Class="AppVentas.MainPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Entry x:Name="buscarEntry" Grid.Row="0" Placeholder="Buscar producto..." TextChanged="BuscarEntry_TextChanged"/>
+
+        <ScrollView Grid.Row="1">
+            <CollectionView x:Name="productosGrid" ItemsLayout="VerticalGrid, 2">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <!-- Bind Source to the RutaImagen property of Producto -->
+                            <Image Source="{Binding RutaImagen}" />
+                            <Label Text="{Binding Descripcion}" />
+                            <Label Text="{Binding Precio, StringFormat='Precio: {0}'}" />
+                            <Button Text="Eliminar Compra" BackgroundColor="Red" Clicked="BotonEliminar_Clicked" IsVisible="{Binding Comprado}" />
+                            <Button Text="Comprar" BackgroundColor="Blue" Clicked="BotonComprar_Clicked" IsVisible="{Binding Comprado, Converter={local:InverseBooleanConverter}}" />
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+    </Grid>
+
+</ContentPage>
