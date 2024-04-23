@@ -1,9 +1,6 @@
-﻿using Microsoft.Maui.Controls;
-using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 
 namespace AppVentas
 {
@@ -21,7 +18,11 @@ namespace AppVentas
 
         public string RutaImagen
         {
-            get { return _rutaImagen; }
+            get {
+                if (string.IsNullOrEmpty(_rutaImagen))
+                    return "Resources/Images/dotnet_bot.png";
+                return _rutaImagen; 
+            }
             set
             {
                 if (_rutaImagen != value)
@@ -51,6 +52,24 @@ namespace AppVentas
         }
     }
 
+    // Clase convertidora booleana para negar el valor booleano
+    public class InverseBooleanConverter : IValueConverter
+    {
+        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is bool booleanValue)
+            {
+                return !booleanValue;
+            }
+            return value;
+        }
+
+        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public partial class MainPage : ContentPage
     {
         private List<Producto> listaProductos;
@@ -60,13 +79,13 @@ namespace AppVentas
             InitializeComponent();
 
             // Inicializar productos
-            InicializarProductos();
+            _ = InicializarProductos();
         }
 
-        private void InicializarProductos()
+        private async Task InicializarProductos()
         {
             // Obtener la lista completa de productos
-            listaProductos = ObtenerListaProductos();
+            listaProductos = await ObtenerListaProductos();
 
             // Asignar la lista completa de productos como la fuente de datos del CollectionView
             productosGrid.ItemsSource = listaProductos;
@@ -106,39 +125,18 @@ namespace AppVentas
             productosGrid.ItemsSource = productosFiltrados;
         }
 
-        // Esta función simula la obtención de la lista de productos
-        private List<Producto> ObtenerListaProductos()
+        // Esta función hace la obtención de la lista de productos
+        private static async Task<List<Producto>> ObtenerListaProductos()
         {
-            // Simplemente vamos a devolver una lista de productos de ejemplo
-            return new List<Producto>
-            {
-                new Producto { Descripcion = "Producto 1", Precio = 10.99, RutaImagen = "Resources/Images/dotnet_bot.png", Comprado = false },
-                new Producto { Descripcion = "Producto 2", Precio = 15.99, RutaImagen = "Resources/Images/dotnet_bot.png", Comprado = false },
-                new Producto { Descripcion = "Producto 3", Precio = 20.99, RutaImagen = "Resources/Images/dotnet_bot.png", Comprado = false },
-                new Producto { Descripcion = "Producto 4", Precio = 25.99, RutaImagen = "Resources/Images/dotnet_bot.png", Comprado = false },
-                new Producto { Descripcion = "Producto 5", Precio = 30.99, RutaImagen = "Resources/Images/dotnet_bot.png", Comprado = false },
-                new Producto { Descripcion = "Producto 6", Precio = 35.99, RutaImagen = "Resources/Images/dotnet_bot.png", Comprado = false },
-                new Producto { Descripcion = "Producto 7", Precio = 40.99, RutaImagen = "Resources/Images/dotnet_bot.png", Comprado = false },
-                new Producto { Descripcion = "Producto 8", Precio = 45.99, RutaImagen = "Resources/Images/dotnet_bot.png", Comprado = false }
-            };
-        }
-    }
+            var Client = new HttpClient();
+            var Result = await Client.GetAsync("https://localhost:7222/api/Product");
 
-    // Clase convertidora booleana para negar el valor booleano
-    public class InverseBooleanConverter : IValueConverter
-    {
-        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            if (value is bool booleanValue)
-            {
-                return !booleanValue;
-            }
-            return value;
+            var Content = await Result.Content.ReadAsStringAsync();
+
+            var Products = JsonConvert.DeserializeObject<List<Producto>>(Content)!;
+
+            return Products;
         }
 
-        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
