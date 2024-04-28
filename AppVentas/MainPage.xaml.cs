@@ -128,14 +128,22 @@ namespace AppVentas
         // Esta función hace la obtención de la lista de productos
         private static async Task<List<Producto>> ObtenerListaProductos()
         {
-            var Client = new HttpClient();
-            var Result = await Client.GetAsync("https://localhost:7222/api/Product");
+            try
+            {
+                var Factory = MauiProgram.Services.GetService<IHttpClientFactory>()!;
+                using var client = Factory.CreateClient();
+                var Request = await client.GetAsync("https://localhost:7222/api/Product");
 
-            var Content = await Result.Content.ReadAsStringAsync();
+                var Content = await Request.Content!.ReadAsStringAsync();
 
-            var Products = JsonConvert.DeserializeObject<List<Producto>>(Content)!;
+                var Products = JsonConvert.DeserializeObject<List<Producto>>(Content)!;
 
-            return Products;
+                return Products;
+            }
+            catch(Exception ex)
+            {
+                return Enumerable.Empty<Producto>().ToList();
+            }
         }
 
     }

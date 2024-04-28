@@ -4,6 +4,7 @@ namespace AppVentas
 {
     public static class MauiProgram
     {
+        public static IServiceProvider Services { get; private set; } = null!;
         public static MauiApp CreateMauiApp()
         {
             var builder = MauiApp.CreateBuilder();
@@ -14,12 +15,14 @@ namespace AppVentas
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+            builder.Services.AddHttpClient();
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
-
-            return builder.Build();
+            var app = builder.Build();
+            Services = app.Services;
+            return app;
         }
     }
 }
