@@ -4,6 +4,22 @@
              x:Class="AppVentas.ShoppingCarView"
              Title="Carrito de compras">
     <VerticalStackLayout>
-        <Button Text="Regresar" Clicked="GoBack" />
+        <Button x:Name="BackButton" Text="Regresar" Clicked="GoBack" Margin="15,0,15,0" />
+        <Button x:Name="BuyButton" Text="Generar compra" Clicked="Buy" Margin="15,10,15,10" />
+
+        <VerticalStackLayout IsVisible="False" x:Name="FormStackLayout" Padding="10">
+            <Label Text="Inicia sesión, en caso de no tener cuenta, se te creará automaticamente" HorizontalTextAlignment="Center" />
+
+            <Entry Placeholder="Correo"/>
+            <Entry Placeholder="Contraseña" IsPassword="True" />
+
+            <Button Text="Cancelar" Clicked="CancelPurchase" Margin="15,10,15,0" />
+            <Button Text="Iniciar sesión" Margin="15,10,15,10" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout  x:Name="DataStackLayout" Padding="10">
+            <Label Text="Estos todos los productos que has elegido" />
+        </VerticalStackLayout>
+        
     </VerticalStackLayout>
 </ContentPage>
