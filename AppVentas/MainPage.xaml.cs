@@ -7,10 +7,10 @@ namespace AppVentas
     // Clase Producto
     public class Producto : INotifyPropertyChanged
     {
+        public int Stock { get; set; }
+        public string Name { get; set; } = null!;
         private bool _comprado;
-        private string _rutaImagen = ""; // Inicializar el campo _rutaImagen con una cadena vacía
-
-        public string Descripcion { get; set; }
+        private string _rutaImagen = "";
         public double Precio { get; set; }
 
         // Hacer el evento PropertyChanged nulable
@@ -96,7 +96,6 @@ namespace AppVentas
             // Lógica para eliminar la compra
             var botonEliminar = (Button)sender;
             var producto = (Producto)botonEliminar.BindingContext;
-            DisplayAlert("Compra Eliminada", $"¡Compra del producto '{producto.Descripcion}' eliminada con éxito!", "OK");
 
             // Ocultar el botón de eliminar compra
             producto.Comprado = false;
@@ -107,7 +106,6 @@ namespace AppVentas
             // Lógica para la compra exitosa
             var botonComprar = (Button)sender;
             var producto = (Producto)botonComprar.BindingContext;
-            DisplayAlert("Compra Exitosa", $"¡Compra del producto '{producto.Descripcion}' realizada con éxito!", "OK");
 
             // Mostrar el botón de eliminar compra
             producto.Comprado = true;
@@ -119,31 +117,43 @@ namespace AppVentas
             string textoBusqueda = e.NewTextValue.ToLowerInvariant();
 
             // Filtrar la lista de productos por la descripción que contenga el texto de búsqueda
-            List<Producto> productosFiltrados = listaProductos.Where(p => p.Descripcion.ToLowerInvariant().Contains(textoBusqueda)).ToList();
+            List<Producto> productosFiltrados = listaProductos.Where(p => p.Name.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
             // Actualizar la fuente de datos del CollectionView con los productos filtrados
             productosGrid.ItemsSource = productosFiltrados;
         }
 
         // Esta función hace la obtención de la lista de productos
-        private static async Task<List<Producto>> ObtenerListaProductos()
+        private async Task<List<Producto>> ObtenerListaProductos()
         {
             try
             {
+                activityIndicator.IsVisible = true;
+                collectionScrollView.IsVisible = false;
+
                 var Factory = MauiProgram.Services.GetService<IHttpClientFactory>()!;
                 using var client = Factory.CreateClient();
-                var Request = await client.GetAsync("https://localhost:7222/api/Product");
+                var Request = await client.GetAsync("https://tienda-maui-backend-fee2d021045f.herokuapp.com/api/Product");
 
                 var Content = await Request.Content!.ReadAsStringAsync();
 
                 var Products = JsonConvert.DeserializeObject<List<Producto>>(Content)!;
 
+                activityIndicator.IsVisible = false;
+                collectionScrollView.IsVisible = true;
                 return Products;
             }
             catch(Exception ex)
             {
+                Console.WriteLine(ex);
                 return Enumerable.Empty<Producto>().ToList();
             }
+        }
+
+        public void ShowShoppingCar(object sender, EventArgs e)
+        {
+            _ = Navigation.PushAsync(new ShoppingCarView());
         }
 
     }

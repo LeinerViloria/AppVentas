@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:AppVentas"
              mc:Ignorable="d"
-             Title="App Ventas"
+             Title="TIENDA - AQUI_LO_ENCUENTRAS"
              x:Class="AppVentas.MainPage">
 
     <Grid>
@@ -13,19 +13,31 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Entry x:Name="buscarEntry" Grid.Row="0" Placeholder="Buscar producto..." TextChanged="BuscarEntry_TextChanged"/>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <ScrollView Grid.Row="1">
+            <Entry x:Name="buscarEntry" Grid.Row="0" Placeholder="Buscar producto..." TextChanged="BuscarEntry_TextChanged"/>
+
+            <Button Text="Ver carrito" Grid.Row="1" Clicked="ShowShoppingCar" />
+        </Grid>
+
+        <ActivityIndicator x:Name="activityIndicator" Grid.Row="1" WidthRequest="80" IsRunning="true" IsVisible="True"  />
+
+        <ScrollView x:Name="collectionScrollView" Grid.Row="1" IsVisible="False" >
             <CollectionView x:Name="productosGrid" ItemsLayout="VerticalGrid, 2">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <StackLayout>
+                        <StackLayout Padding="8">
                             <!-- Bind Source to the RutaImagen property of Producto -->
                             <Image Source="{Binding RutaImagen}" />
-                            <Label Text="{Binding Descripcion}" />
+                            <Label Text="{Binding Name}" />
+                            <Label Text="{Binding Stock, StringFormat='Cantidad: {0}'}" />
                             <Label Text="{Binding Precio, StringFormat='Precio: {0}'}" />
-                            <Button Text="Eliminar Compra" BackgroundColor="Red" Clicked="BotonEliminar_Clicked" IsVisible="{Binding Comprado}" />
-                            <Button Text="Comprar" BackgroundColor="Blue" Clicked="BotonComprar_Clicked" IsVisible="{Binding Comprado, Converter={local:InverseBooleanConverter}}" />
+                            <Button Text="Eliminar del carrito" BackgroundColor="Red" Clicked="BotonEliminar_Clicked" IsVisible="{Binding Comprado}" />
+                            <Button Text="Agregar al carrito" Clicked="BotonComprar_Clicked" IsVisible="{Binding Comprado, Converter={local:InverseBooleanConverter}}" />
                         </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
