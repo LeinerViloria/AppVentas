@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AppVentas.Services;
+using Microsoft.Extensions.Logging;
 
 namespace AppVentas
 {
@@ -16,6 +17,7 @@ namespace AppVentas
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
             builder.Services.AddHttpClient();
+            builder.Services.AddSingleton<LocalDbService>();
 
 #if DEBUG
             builder.Logging.AddDebug();

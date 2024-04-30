@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using AppVentas.Services;
+using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Globalization;
 
@@ -7,6 +8,7 @@ namespace AppVentas
     // Clase Producto
     public class Producto : INotifyPropertyChanged
     {
+        public int Rowid { get; set; }
         public int Stock { get; set; }
         public string Name { get; set; } = null!;
         private bool _comprado;
@@ -72,10 +74,12 @@ namespace AppVentas
 
     public partial class MainPage : ContentPage
     {
-        private List<Producto> listaProductos;
+        private List<Producto>? listaProductos { get; set; }
+        readonly LocalDbService dbService;
 
         public MainPage()
         {
+            dbService = MauiProgram.Services.GetService<LocalDbService>()!;
             InitializeComponent();
 
             // Inicializar productos
@@ -105,7 +109,28 @@ namespace AppVentas
         {
             // Lógica para la compra exitosa
             var botonComprar = (Button)sender;
-            var producto = (Producto)botonComprar.BindingContext;
+            _ = AddToCar((Producto)botonComprar.BindingContext);
+        }
+
+        private async Task AddToCar(Producto producto)
+        {
+            var result = await DisplayPromptAsync("Cantidad", "¿Cuántos items va a solicitar?", keyboard: Keyboard.Numeric);
+
+            if (string.IsNullOrEmpty(result))
+                return;
+
+            _ = int.TryParse(result, out var Amount);
+
+            if(Amount <= 0)
+                return;
+
+            if(Amount > producto.Stock)
+            {
+                _ = DisplayAlert("Cantidad invalida", "Tu monto supera a la cantidad disponible", "Cerrar");
+                return;
+            }
+
+            await dbService.AddToCart(producto, Amount);
 
             // Mostrar el botón de eliminar compra
             producto.Comprado = true;
@@ -117,7 +142,7 @@ namespace AppVentas
             string textoBusqueda = e.NewTextValue.ToLowerInvariant();
 
             // Filtrar la lista de productos por la descripción que contenga el texto de búsqueda
-            List<Producto> productosFiltrados = listaProductos.Where(p => p.Name.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase))
+            var productosFiltrados = listaProductos?.Where(p => p.Name.Contains(textoBusqueda, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
             // Actualizar la fuente de datos del CollectionView con los productos filtrados
@@ -153,7 +178,7 @@ namespace AppVentas
 
         public void ShowShoppingCar(object sender, EventArgs e)
         {
-            _ = Navigation.PushAsync(new ShoppingCarView());
+            _ = Navigation.PushAsync(ActivatorUtilities.CreateInstance<ShoppingCarView>(MauiProgram.Services));
         }
 
     }

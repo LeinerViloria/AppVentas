@@ -1,10 +1,23 @@
+using AppVentas.Services;
+
 namespace AppVentas;
 
 public partial class ShoppingCarView : ContentPage
 {
-	public ShoppingCarView()
+	readonly LocalDbService dbService;
+
+    public ShoppingCarView(LocalDbService dbService)
 	{
-		InitializeComponent();
+		this.dbService = dbService;
+
+        InitializeComponent();
+
+		_ = LoadCar();
+	}
+
+	async Task LoadCar()
+	{
+		var Items = await dbService.GetItems();
 	}
 
     public void GoBack(object sender, EventArgs e)
