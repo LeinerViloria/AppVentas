@@ -105,7 +105,17 @@ public partial class ShoppingCarView : ContentPage
 
         if (Success)
         {
-            _ = DisplayAlert("Inició sesión", "", "Cerrar");
+            if(Preferences.ContainsKey(nameof(App.UserToken)))
+            {
+                Preferences.Remove(nameof(App.UserToken));
+            }
+
+            var UserToken = (string)Json["data"]!;
+
+            Preferences.Set(nameof(App.UserToken), UserToken);
+            App.UserToken = UserToken;
+
+            _ = DisplayAlert("Inició sesión", "Ha iniciado exitosamente", "Cerrar");
         }
         else
         {
