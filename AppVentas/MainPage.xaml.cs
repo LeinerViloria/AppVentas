@@ -101,8 +101,15 @@ namespace AppVentas
             var botonEliminar = (Button)sender;
             var producto = (Producto)botonEliminar.BindingContext;
 
+            _ = RemoveFromCar(producto.Rowid);
+
             // Ocultar el botón de eliminar compra
             producto.Comprado = false;
+        }
+
+        private async Task RemoveFromCar(int RowidProducto)
+        {
+            await dbService.DeleteItems([RowidProducto]);
         }
 
         private void BotonComprar_Clicked(object sender, EventArgs e)
@@ -164,6 +171,10 @@ namespace AppVentas
                 var Content = await Request.Content!.ReadAsStringAsync();
 
                 var Products = JsonConvert.DeserializeObject<List<Producto>>(Content)!;
+
+                var ProductsInCar = await dbService.GetProductsInCar();
+
+                Products.ForEach(x => x.Comprado = ProductsInCar.Contains(x.Rowid));
 
                 activityIndicator.IsVisible = false;
                 collectionScrollView.IsVisible = true;

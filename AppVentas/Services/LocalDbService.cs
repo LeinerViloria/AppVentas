@@ -9,7 +9,7 @@ namespace AppVentas.Services
     public class LocalDbService
     {
         const string DBName = "LocalDb_Tienda";
-        readonly SQLiteAsyncConnection connection;
+        readonly SQLiteAsyncConnection connection = null!;
 
         public LocalDbService()
         {
@@ -19,7 +19,7 @@ namespace AppVentas.Services
                 connection = new SQLiteAsyncConnection(Route);
                 connection.CreateTableAsync<Purchase>().Wait();
             }
-            catch(Exception ex)
+            catch
             {
 
             }
@@ -61,13 +61,21 @@ namespace AppVentas.Services
             try
             {
                 await connection.Table<Purchase>()
-                    .Where(x => Items.Contains(x.Rowid))
+                    .Where(x => Items.Contains(x.RowidProducto))
                     .DeleteAsync();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        public async Task<IEnumerable<int>> GetProductsInCar()
+        {
+            var Items = await connection.Table<Purchase>()
+                .ToListAsync();
+
+            return Items.Select(x => x.RowidProducto);
         }
     }
 }
