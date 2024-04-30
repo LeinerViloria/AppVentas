@@ -30,6 +30,22 @@ public partial class ShoppingCarView : ContentPage
 
     }
 
+    private void BotonEliminar_Clicked(object sender, EventArgs e)
+    {
+        // Lógica para eliminar la compra
+        var botonEliminar = (Button)sender;
+        var producto = (Producto)botonEliminar.BindingContext;
+
+        _ = RemoveFromCar(producto.Rowid);
+    }
+
+    private async Task RemoveFromCar(int RowidProducto)
+    {
+        await dbService.DeleteItems([RowidProducto]);
+
+        _ = LoadCar();
+    }
+
     public void GoBack(object sender, EventArgs e)
 	{
 		_ = Navigation.PopAsync();

@@ -29,6 +29,8 @@
                                 <Label Text="{Binding Name}" />
                                 <Label Text="{Binding Stock, StringFormat='Cantidad: {0}'}" />
                                 <Label Text="{Binding Precio, StringFormat='Precio: {0}'}" />
+
+                                <Button Text="Eliminar del carrito" BackgroundColor="Red" Clicked="BotonEliminar_Clicked"  />
                             </StackLayout>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
