@@ -18,7 +18,23 @@
         </VerticalStackLayout>
 
         <VerticalStackLayout  x:Name="DataStackLayout" Padding="10">
-            <Label Text="Estos todos los productos que has elegido" />
+            
+            <ScrollView x:Name="collectionScrollView">
+                <CollectionView x:Name="productosGrid" ItemsLayout="VerticalGrid, 2">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout Padding="8">
+                                <!-- Bind Source to the RutaImagen property of Producto -->
+                                <Image Source="{Binding RutaImagen}" />
+                                <Label Text="{Binding Name}" />
+                                <Label Text="{Binding Stock, StringFormat='Cantidad: {0}'}" />
+                                <Label Text="{Binding Precio, StringFormat='Precio: {0}'}" />
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ScrollView>
+            
         </VerticalStackLayout>
         
     </VerticalStackLayout>

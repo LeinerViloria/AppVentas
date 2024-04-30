@@ -1,10 +1,12 @@
 using AppVentas.Services;
+using Newtonsoft.Json;
 
 namespace AppVentas;
 
 public partial class ShoppingCarView : ContentPage
 {
 	readonly LocalDbService dbService;
+    private List<Producto>? listaProductos { get; set; }
 
     public ShoppingCarView(LocalDbService dbService)
 	{
@@ -18,7 +20,15 @@ public partial class ShoppingCarView : ContentPage
 	async Task LoadCar()
 	{
 		var Items = await dbService.GetItems();
-	}
+		listaProductos = Items.Select(x => {
+				var Product = JsonConvert.DeserializeObject<Producto>(x.Product)!;
+				Product.Stock = x.Cantidad;
+				return Product;
+            }).ToList();
+
+		productosGrid.ItemsSource = listaProductos;
+
+    }
 
     public void GoBack(object sender, EventArgs e)
 	{
