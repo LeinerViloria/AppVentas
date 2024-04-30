@@ -10,11 +10,12 @@
         <VerticalStackLayout IsVisible="False" x:Name="FormStackLayout" Padding="10">
             <Label Text="Inicia sesión, en caso de no tener cuenta, se te creará automaticamente" HorizontalTextAlignment="Center" />
 
-            <Entry Placeholder="Correo"/>
-            <Entry Placeholder="Contraseña" IsPassword="True" />
+            <Entry x:Name="EmailEntry" Placeholder="Correo" Keyboard="Email" />
+            <Entry x:Name="PassEntry" Placeholder="Contraseña" IsPassword="True" />
 
-            <Button Text="Cancelar" Clicked="CancelPurchase" Margin="15,10,15,0" />
-            <Button Text="Iniciar sesión" Margin="15,10,15,10" />
+            <Button x:Name="CancelButton" Text="Cancelar" Clicked="CancelPurchase" Margin="15,10,15,0" />
+            <Button x:Name="LoginButton" Text="Iniciar sesión" Margin="15,10,15,0" Clicked="Login" />
+            <Button x:Name="RegisterButton" Text="Registrate" Margin="15,10,15,0" />
         </VerticalStackLayout>
 
         <VerticalStackLayout  x:Name="DataStackLayout" Padding="10">
