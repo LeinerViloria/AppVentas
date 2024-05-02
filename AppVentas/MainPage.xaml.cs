@@ -128,10 +128,10 @@ namespace AppVentas
 
             _ = int.TryParse(result, out var Amount);
 
-            if(Amount <= 0)
+            if (Amount <= 0)
                 return;
 
-            if(Amount > producto.Stock)
+            if (Amount > producto.Stock)
             {
                 _ = DisplayAlert("Cantidad invalida", "Tu monto supera a la cantidad disponible", "Cerrar");
                 return;
